@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.lastlysly</groupId>
+    <artifactId>myalldemos</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>rabbitmq-demo</module>
+        <module>lastlysly-common</module>
+        <module>tcp-demo</module>
+        <module>pay-demo</module>
+        <module>activiti-demo</module>
+    </modules>
+
+    <properties>
+        <!-- 工程编码 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- maven -->
+        <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
+        <!-- jdk -->
+        <java.version>1.8</java.version>
+        <!-- hutooljava工具类集合 -->
+        <hutool.version>4.4.2</hutool.version>
+
+        <!-- springboot相关 -->
+        <spring.boot.version>1.5.9.RELEASE</spring.boot.version>
+        <!--spring-->
+        <spring.version>4.3.9.RELEASE</spring.version>
+
+        <mybatis.version>3.4.5</mybatis.version>
+        <mybatis-spring.version>1.2.2</mybatis-spring.version>
+        <druid.version>1.1.9</druid.version>
+
+        <!-- mysql驱动版本号 -->
+        <mysql-driver.version>6.0.6</mysql-driver.version>
+
+        <!--activiti相关-->
+        <activiti.version>5.21.0</activiti.version>
+
+
+        <slf4j.version>1.7.25</slf4j.version>
+        <jackson.version>2.9.1</jackson.version>
+        <commons-lang3.version>3.5</commons-lang3.version>
+
+        <mysql.driver.version>5.1.30</mysql.driver.version>
+
+    </properties>
+
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
