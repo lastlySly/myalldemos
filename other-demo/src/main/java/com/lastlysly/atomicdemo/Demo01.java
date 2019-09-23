@@ -18,6 +18,8 @@ public class Demo01 {
 
     public static void main(String[] args) {
         System.out.println(2333);
+        Integer a = new Integer(0);
+        System.out.println("ceshi"+a.toString());
         Thread[] threads = new Thread[THREADS_CONUT];
         for (int i = 0; i < THREADS_CONUT; i++) {
             threads[i] = new Thread(new Runnable() {

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <h1>测试pdf预览</h1>
+    <a href="/pdf/showPdf/1">a标签显示pdf</a>
+    <button id="btn">window.open显示pdf</button>
+    <img src="/pdf/showPdf/1">
+</head>
+<body>
+    <script>
+        document.getElementById("btn").onclick= function () {
+            console.log(2333)
+            window.open("http://localhost:8080/pdf/showPdf/1");
+        }
+
+    </script>
+</body>
+</html>

@@ -10,3 +10,7 @@ gen
 /qrcode-demo/.mvn/
 /qrcode-demo/mvnw
 /qrcode-demo/mvnw.cmd
+/electronic-contract-demo/mvnw
+/electronic-contract-demo/mvnw.cmd
+/electronic-contract-demo/.mvn/
+/other-demo/.mvn/
