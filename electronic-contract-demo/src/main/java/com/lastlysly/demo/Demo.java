@@ -21,12 +21,13 @@ import java.util.Map;
 public class Demo {
 
     public static void main(String[] args) {
-        Map map = CustomAsposeWordsUtils.getDataMap();
-//        生成电子合同到指定位置   文档格式
-//        CustomAsposeWordsUtils.createDocToPath();
-
-//        生成电子合同到指定位置   转pdf格式
-        CustomAsposeWordsUtils.createPdfToPath("C:/Users/lastlySly/Desktop/1.pdf",map);
+//        Map map = CustomAsposeWordsUtils.getDataMap();
+////        生成电子合同到指定位置   文档格式
+////        CustomAsposeWordsUtils.createDocToPath();
+//
+////        生成电子合同到指定位置   转pdf格式
+//        CustomAsposeWordsUtils customAsposeWordsUtils = new CustomAsposeWordsUtils();
+//        customAsposeWordsUtils.createPdfToPath("C:/Users/lastlySly/Desktop/1.pdf",map);
 
 
 //        生成电子合同到指定位置   转图片格式

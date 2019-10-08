@@ -10,6 +10,9 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.Version;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -23,7 +26,16 @@ import java.util.Map;
  * @create 2019-09-05 10:19
  * AsposeWords 工具类
  **/
+@Component
 public class CustomAsposeWordsUtils {
+
+    /**
+     * 该方式为交由spring管理方式，由于资源文件在打成jar包运行时，
+     * 无法读取到jar内部绝对路径，会导致空指针异常，采用该方式初始化freemark的模板则能解决，
+     * 需进行配置，详情请看配置文件appliction.properties
+     */
+    @Autowired
+    private FreeMarkerConfigurer freeMarkerConfigurer;
 
     public static void getLicense() throws Exception {
         String s = "<License><Data><Products><Product>Aspose.Total for Java</Product><Product>Aspose.Words for Java</Product></Products><EditionType>Enterprise</EditionType><SubscriptionExpiry>20991231</SubscriptionExpiry><LicenseExpiry>20991231</LicenseExpiry><SerialNumber>8bfe198c-7f0c-4ef8-8ff0-acc3237bf0d7</SerialNumber></Data><Signature>sNLLKGMUdF0r8O1kKilWAGdgfs2BvJb/2Xp8p5iuDVfZXmhppo+d0Ran1P9TKdjV4ABwAgKXxJ3jcQTqE/2IRfqwnPf8itN8aFZlV3TJPYeD3yWE7IT55Gz6EijUpC7aKeoohTb4w2fpox58wWoF3SNp6sK6jDfiAUGEHYJ9pjU=</Signature></License>";
@@ -50,19 +62,27 @@ public class CustomAsposeWordsUtils {
     /**
      * 生成电子合同到指定位置   文档格式
      */
-    public static void createDocToPath(String savePath,Map map){
+    public void createDocToPath(String savePath,Map map){
 
 //        Map map = getDataMap();
         try {
-            Version version = new Version("2.3.28");
-            Configuration configuration = new Configuration(version);
-            configuration.setDefaultEncoding("utf-8");
-            URI uri = CustomAsposeWordsUtils.class.getResource("/ftl/").toURI();
-            String path = uri.getPath();
-            configuration.setDirectoryForTemplateLoading(new File(path));
+            /**
+             * 普通方式
+             */
+//            Version version = new Version("2.3.28");
+//            Configuration configuration = new Configuration(version);
+//            configuration.setDefaultEncoding("utf-8");
+//            URI uri = CustomAsposeWordsUtils.class.getResource("/ftl/").toURI();
+//            String path = uri.getPath();
+//            configuration.setDirectoryForTemplateLoading(new File(path));
+//            //以utf-8的编码读取ftl文件
+//            Template t =  configuration.getTemplate("test-word-byfeemarker.ftl","utf-8");
+
+            /**
+             * 交由spring管理方式
+             */
+            Template t = freeMarkerConfigurer.getConfiguration().getTemplate("test-word-byfeemarker.ftl");
             File outFile = new File(savePath);
-            //以utf-8的编码读取ftl文件
-            Template t =  configuration.getTemplate("test-word-byfeemarker.ftl","utf-8");
             Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile), "utf-8"));
             t.process(map, out);
             out.close();
@@ -70,16 +90,17 @@ public class CustomAsposeWordsUtils {
             e.printStackTrace();
         } catch (TemplateException e) {
             e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
         }
+//        catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        }
     }
 
 
     /**
      * 生成电子合同到指定位置   转pdf格式
      */
-    public static void createPdfToPath(String savePath,Map map){
+    public void createPdfToPath(String savePath,Map map){
 //        Map map = getDataMap();
         ByteArrayOutputStream byteArrayOutputStream = null;
         OutputStreamWriter outputStreamWriter = null;
@@ -133,7 +154,7 @@ public class CustomAsposeWordsUtils {
     /**
      * 生成电子合同到指定位置   转图片格式
      */
-    public static void createImageToPath(Map map){
+    public void createImageToPath(Map map){
 //        Map map = getDataMap();
         ByteArrayOutputStream byteArrayOutputStream = null;
         OutputStreamWriter outputStreamWriter = null;
@@ -193,7 +214,7 @@ public class CustomAsposeWordsUtils {
      * @param response
      * @param map
      */
-    public static void createAndShowPdf(HttpServletResponse response,Map map){
+    public void createAndShowPdf(HttpServletResponse response,Map map){
 
 //        Map map = CustomAsposeWordsUtils.getDataMap();
         ByteArrayOutputStream byteArrayOutputStream = null;
@@ -201,7 +222,7 @@ public class CustomAsposeWordsUtils {
         ByteArrayInputStream byteArrayInputStream = null;
 
         try {
-            byteArrayOutputStream = CustomAsposeWordsUtils.getWordFileOutputStream(map);
+            byteArrayOutputStream = getWordFileOutputStream(map);
 
             /**
              * ================word模板渲染完数据后，转换为其他格式=====================
@@ -243,18 +264,24 @@ public class CustomAsposeWordsUtils {
     /**
      * 传入数据，渲染模板，返回渲染完数据的word文件的流
      */
-    public static ByteArrayOutputStream getWordFileOutputStream(Map map) throws URISyntaxException, IOException, TemplateException {
+    public ByteArrayOutputStream getWordFileOutputStream(Map map) throws URISyntaxException, IOException, TemplateException {
         ByteArrayOutputStream byteArrayOutputStream;
         OutputStreamWriter outputStreamWriter;
-        Version version = new Version("2.3.28");
-        Configuration configuration = new Configuration(version);
-        configuration.setDefaultEncoding("utf-8");
-        URI uri = Demo.class.getResource("/ftl/").toURI();
-        String path = uri.getPath();
-        configuration.setDirectoryForTemplateLoading(new File(path));
-        //以utf-8的编码读取ftl文件
-        Template template = configuration.getTemplate("test-word-byfeemarker.ftl", "utf-8");
-
+        /**
+         * 普通方式
+         */
+//        Version version = new Version("2.3.28");
+//        Configuration configuration = new Configuration(version);
+//        configuration.setDefaultEncoding("utf-8");
+//        URI uri = Demo.class.getResource("/ftl/").toURI();
+//        String path = uri.getPath();
+//        configuration.setDirectoryForTemplateLoading(new File(path));
+//        //以utf-8的编码读取ftl文件
+//        Template template = configuration.getTemplate("test-word-byfeemarker.ftl", "utf-8");
+        /**
+         * 交由spring管理方式
+         */
+        Template template = freeMarkerConfigurer.getConfiguration().getTemplate("test-word-byfeemarker.ftl","utf-8");
         byteArrayOutputStream = new ByteArrayOutputStream();
         outputStreamWriter = new OutputStreamWriter(byteArrayOutputStream);
         template.process(map, outputStreamWriter);

@@ -4,6 +4,8 @@ import com.aspose.words.Document;
 import com.aspose.words.SaveFormat;
 import com.lastlysly.utils.CustomAsposeWordsUtils;
 import freemarker.template.TemplateException;
+import org.checkerframework.checker.units.qual.A;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +23,9 @@ import java.util.Map;
 @RestController
 public class DemoController {
 
+    @Autowired
+    private CustomAsposeWordsUtils customAsposeWordsUtils;
+
     @GetMapping("hello")
     public String hello(){
         return "hello electronic-contract";
@@ -30,6 +35,6 @@ public class DemoController {
     @RequestMapping("/createAndShowPdf")
     public void createAndShowPdf(HttpServletResponse response){
         Map map = CustomAsposeWordsUtils.getDataMap();
-        CustomAsposeWordsUtils.createAndShowPdf(response,map);
+        customAsposeWordsUtils.createAndShowPdf(response,map);
     }
 }
