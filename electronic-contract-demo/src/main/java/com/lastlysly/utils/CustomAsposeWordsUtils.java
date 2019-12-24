@@ -1,19 +1,18 @@
 package com.lastlysly.utils;
 
-import com.aspose.words.Document;
-import com.aspose.words.ImageSaveOptions;
-import com.aspose.words.License;
-import com.aspose.words.SaveFormat;
+import com.aspose.words.*;
 import com.google.common.collect.Maps;
 import com.lastlysly.demo.Demo;
-import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import freemarker.template.Version;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URI;
@@ -28,7 +27,16 @@ import java.util.Map;
  **/
 @Component
 public class CustomAsposeWordsUtils {
-
+    private static Logger logger = LoggerFactory.getLogger(CustomAsposeWordsUtils.class);
+    private static String projectPath = System.getProperty("user.dir");
+    static {
+        try {
+            getLicense();
+            setAsposeFolder();
+        } catch (Exception e) {
+            logger.error("CustomAsposeWordsUtils初始化失败",e);
+        }
+    }
     /**
      * 该方式为交由spring管理方式，由于资源文件在打成jar包运行时，
      * 无法读取到jar内部绝对路径，会导致空指针异常，采用该方式初始化freemark的模板则能解决，
@@ -37,11 +45,48 @@ public class CustomAsposeWordsUtils {
     @Autowired
     private FreeMarkerConfigurer freeMarkerConfigurer;
 
+    /**
+     * 获取授权，去除水印
+     * @throws Exception
+     */
     public static void getLicense() throws Exception {
         String s = "<License><Data><Products><Product>Aspose.Total for Java</Product><Product>Aspose.Words for Java</Product></Products><EditionType>Enterprise</EditionType><SubscriptionExpiry>20991231</SubscriptionExpiry><LicenseExpiry>20991231</LicenseExpiry><SerialNumber>8bfe198c-7f0c-4ef8-8ff0-acc3237bf0d7</SerialNumber></Data><Signature>sNLLKGMUdF0r8O1kKilWAGdgfs2BvJb/2Xp8p5iuDVfZXmhppo+d0Ran1P9TKdjV4ABwAgKXxJ3jcQTqE/2IRfqwnPf8itN8aFZlV3TJPYeD3yWE7IT55Gz6EijUpC7aKeoohTb4w2fpox58wWoF3SNp6sK6jDfiAUGEHYJ9pjU=</Signature></License>";
         ByteArrayInputStream is = new ByteArrayInputStream(s.getBytes());
         License license = new License();
         license.setLicense(is);
+    }
+
+    /**
+     * 设置字体文件夹(默认扫描系统字体包，linux上可能不存在部分字体，出现被替换为方框)
+     * 也可以不设置这句，但需要linux安装这些字体
+     */
+    public static void setAsposeFolder() throws IOException {
+        /**
+         * 注册为Component 后无法使用classLoader
+         * 因为是通过：ApplicationContext applicationContext = new ClassPathXmlApplicationContext(path); 来初始化所有的类。
+         * spring默认的classloader会是自己定义的DefaultResourceLoader，并且会把 DefaultResourceLoader设置当前线程的默认加载器。当你在加载外部类的时候就会找不到类，因为加载外部类是在另一个ClassLoader中。
+         */
+//        ClassLoader classLoader = CustomAsposeWordsUtils.class.getClassLoader();
+
+        InputStream simheiIs = CustomAsposeWordsUtils.class.getResourceAsStream("/asposefonts/simhei.ttf");
+        InputStream simsunIs = CustomAsposeWordsUtils.class.getResourceAsStream("/asposefonts/simsun.ttc");
+        File fileDir = new File(projectPath + "/asposefonts");
+        File simheiFile = new File(projectPath + "/asposefonts/simhei.ttf");
+        IsToFile(simheiFile,fileDir,simheiIs);
+        File simsunFile = new File(projectPath + "/asposefonts/simsun.ttc");
+        IsToFile(simsunFile,fileDir,simsunIs);
+        FontSettings.setFontsFolder(projectPath + "/asposefonts/",false);
+    }
+    private static void IsToFile(File file,File fileDir,InputStream fontIs) throws IOException {
+        if (!file.exists()){
+            if (!fileDir.exists()){
+                fileDir.mkdirs();
+            }
+            file.createNewFile();
+            FileUtils.copyInputStreamToFile(fontIs,file);
+            fontIs.close();
+        }
+
     }
 
 
@@ -117,10 +162,6 @@ public class CustomAsposeWordsUtils {
              */
 
             byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-            /**
-             * 获取授权，去除水印
-             */
-            CustomAsposeWordsUtils.getLicense();
             Document document = new Document(byteArrayInputStream);
 
 //            String pdfFilePath = "C:/Users/lastlySly/Desktop/testword.pdf";
@@ -128,7 +169,7 @@ public class CustomAsposeWordsUtils {
             /**
              * 转为pdf并保存到本地
              */
-            document.save(new FileOutputStream(new File(savePath)), SaveFormat.PDF);
+            document.save(savePath, SaveFormat.PDF);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -172,10 +213,6 @@ public class CustomAsposeWordsUtils {
 
             byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
 
-            /**
-             * 获取授权，去除水印
-             */
-            CustomAsposeWordsUtils.getLicense();
             Document document = new Document(byteArrayInputStream);
 
             /**
@@ -186,7 +223,7 @@ public class CustomAsposeWordsUtils {
             for (int page = 0; page < document.getPageCount(); page ++){
                 System.out.println("===生成第"+page + "张");
                 iso.setPageIndex(page);
-                document.save(new FileOutputStream(new File("C:/Users/lastlySly/Desktop/image"+ page +".jpeg")), iso);
+                document.save("C:/Users/lastlySly/Desktop/image"+ page +".jpeg", iso);
             }
 
         } catch (Exception e) {
@@ -228,10 +265,6 @@ public class CustomAsposeWordsUtils {
              * ================word模板渲染完数据后，转换为其他格式=====================
              */
             byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-            /**
-             * 获取授权，去除水印
-             */
-            CustomAsposeWordsUtils.getLicense();
             Document document = new Document(byteArrayInputStream);
 
             /**
@@ -288,7 +321,4 @@ public class CustomAsposeWordsUtils {
 
         return byteArrayOutputStream;
     }
-
-
-
 }
