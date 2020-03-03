@@ -1,6 +1,6 @@
 
 ## 学习Demo，笔记
-
+    java-foundation-learning：java核心基础（IO，多线程，网络编程）
     activiti-demo：工作流activiti
     electronic-contract-demo：电子合同demo freemarker，AsposeWords使用
     other-demo：杂项、测试等小demo，包含流量限流，一些通用工具，并发处理Demo等。

@@ -128,9 +128,16 @@ public class CustomAsposeWordsUtils {
              */
             Template t = freeMarkerConfigurer.getConfiguration().getTemplate("test-word-byfeemarker.ftl");
             File outFile = new File(savePath);
-            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile), "utf-8"));
+            /**
+             * 及时关闭流，防止资源占用不释放（详细查看java垃圾回收机制）
+             */
+            FileOutputStream fileOutputStream = new FileOutputStream(outFile);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "utf-8");
+            Writer out = new BufferedWriter(outputStreamWriter);
             t.process(map, out);
             out.close();
+            outputStreamWriter.close();
+            fileOutputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (TemplateException e) {
