@@ -6,6 +6,8 @@ import com.lastlysly.utils.CustomAsposeWordsUtils;
 import freemarker.template.TemplateException;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,4 +39,17 @@ public class DemoController {
         Map map = CustomAsposeWordsUtils.getDataMap();
         customAsposeWordsUtils.createAndShowPdf(response,map);
     }
+
+    @GetMapping("/createImageToPath")
+    public String createImageToPath() {
+        Map map = CustomAsposeWordsUtils.getDataMap();
+        for (int i=0; i < 30; i++) {
+            customAsposeWordsUtils.createImageToPath(map);
+        }
+
+        System.out.println(233333);
+        return "23333";
+
+    }
+
 }

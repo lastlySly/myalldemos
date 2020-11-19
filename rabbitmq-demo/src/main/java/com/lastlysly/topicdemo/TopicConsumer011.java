@@ -8,11 +8,13 @@ import java.io.IOException;
 /**
  * @author lastlySly
  * @GitHub https://github.com/lastlySly
- * @create 2019-01-28 09:08
+ * @create 2019-01-28 09:07
+ *
+ * 多消费者，和TopicConsumer01消费同一个队列里的消息，即，工作队列
  **/
-public class TopicConsumer02 {
+public class TopicConsumer011 {
 
-    private final static String QUEUE_NAME = "test_queue_topic_2";
+    private final static String QUEUE_NAME = "test_queue_topic_1";
     private final static String EXCHANGE_NAME = "test_exchange_topic";
     public static void main(String[] argv) throws Exception {
 // 获取到连接以及mq通道
@@ -21,10 +23,10 @@ public class TopicConsumer02 {
 // 声明队列
         channel.queueDeclare(QUEUE_NAME, false, false, false, null);
 // 绑定队列到交换机
-            //*  (星号) 用来表示一个单词 (必须出现的)
-            //#  (井号) 用来表示任意数量（零个或多个）单词
-        String routingKey = "goods.#";
-        channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, routingKey);
+        String routingKey1 = "goods.delete";
+        String routingKey2 = "goods.add";
+        channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, routingKey1);
+        channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, routingKey2);
 //------------下面逻辑和work模式一样-----
 // 同一时刻服务器只会发一条消息给消费者
         channel.basicQos(1);

@@ -8,6 +8,7 @@
 out
 gen
 /qrcode-demo/.mvn/
+/excel-deal-demo/.mvn/
 /qrcode-demo/mvnw
 /qrcode-demo/mvnw.cmd
 /electronic-contract-demo/mvnw
